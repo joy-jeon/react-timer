@@ -1,34 +1,104 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-around;
   max-width: 800px;
   margin: 0 auto;
   width: 100vw;
   height: 100vh;
+  background: #e84d3f;
 `;
 
 const Button = styled(motion.button)`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.2);
+  border: none;
+`;
+const Svg = styled.svg`
+  color: white;
+  width: 80%;
 `;
 
 const Title = styled.h1`
-  padding: 20px;
-  font-size: 18px;
+  padding: 10px;
+  font-size: 40px;
+  font-weight: 700;
   color: white;
 `;
 
-const Svg = styled.svg``;
+const panelStyle = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 110px;
+  height: 160px;
+  border-radius: 4px;
+  color: #e84d3f;
+  font-size: 50px;
+  font-weight: 700;
+  background-color: white;
+`;
+const dot = css`
+  content: "";
+  display: flex;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+`;
+const NumberPanel = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  .minutes {
+    ${panelStyle};
+  }
+  .seconds {
+    ${panelStyle};
+  }
+
+  .icon {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    ::before,
+    ::after {
+      ${dot}
+    }
+  }
+`;
+
+const StatusPanel = styled(motion.div)`
+  display: flex;
+  gap: 20px;
+  .item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    span:first-child {
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    span:last-child {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.7);
+      text-shadow: 1px 1px 2px #666;
+    }
+  }
+`;
 
 export default function App() {
   const [isPlay, setIsPlay] = useState(false);
@@ -37,8 +107,18 @@ export default function App() {
     <Wrapper>
       <AnimatePresence>
         <Title>Pomodoro</Title>
-        <div>timer number</div>
-        <Button onClick={togglePlay}>
+        <NumberPanel>
+          <div className="minutes">
+            <span>2</span>
+            <span>5</span>
+          </div>
+          <div className="icon"></div>
+          <div className="seconds">
+            <span>0</span>
+            <span>0</span>
+          </div>
+        </NumberPanel>
+        <Button onClick={togglePlay} layout>
           {isPlay ? (
             <Svg
               data-slot="icon"
@@ -61,16 +141,16 @@ export default function App() {
             </Svg>
           )}
         </Button>
-        <div>
-          <div>
+        <StatusPanel>
+          <div className="item">
             <span>0/4</span>
             <span>Round</span>
           </div>
-          <div>
+          <div className="item">
             <span>0/12</span>
             <span>Goal</span>
           </div>
-        </div>
+        </StatusPanel>
       </AnimatePresence>
     </Wrapper>
   );

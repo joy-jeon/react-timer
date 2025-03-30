@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import styled, { css, useTheme } from "styled-components";
-import { isDarkAtom, isTimeAtom } from "./Atom";
+import { isTimeAtom } from "./Atom";
 
 // ----------------------------------------------
 //  css mixin
@@ -19,7 +19,7 @@ const panelStyle = css`
   width: 110px;
   height: 160px;
   border-radius: 4px;
-  color: ${(props) => props.theme.primaryColor};
+  color: #e84d3f;
   font-size: 50px;
   font-weight: 700;
   background-color: white;
@@ -37,7 +37,6 @@ const colonDot = css`
 //  styled components
 // ----------------------------------------------
 const Wrapper = styled(motion.div)`
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -46,18 +45,9 @@ const Wrapper = styled(motion.div)`
   margin: 0 auto;
   width: 100vw;
   height: 100vh;
-  background: ${(props) => props.theme.primaryColor};
+  background: #e84d3f;
 `;
 
-const ThemeBtn = styled(motion.button)`
-  position: absolute;
-  right: 30px;
-  top: 20px;
-  display: flex;
-  background: none;
-  border: none;
-  width: 20px;
-`;
 const Button = styled(motion.button)`
   position: relative;
   display: flex;
@@ -164,11 +154,8 @@ const panelMotion = {
 export default function App() {
   const togglePlay = () => setIsPlay((prev) => !prev);
   const [isPlay, setIsPlay] = useRecoilState(isTimeAtom);
-  const [isDark, setIsDark] = useRecoilState(isDarkAtom);
-  const toggleTheme = () => setIsDark((prev) => !prev);
-  const theme = useTheme();
 
-  const [time, setTime] = useState(5); // 25분 = 1500초
+  const [time, setTime] = useState(25 * 60); // 25분 = 1500초
   const minutes = String(Math.floor(time / 60)).padStart(2, "0");
   const second = String(time % 60).padStart(2, "0");
 
@@ -186,32 +173,34 @@ export default function App() {
     if (isPlay && time > 0) {
       timer = setInterval(() => {
         setTime((prev) => prev - 1);
-      }, 1000); // 밀리초, 1000 = 1초
+      }, 1000);
     }
 
-    if (time === 0) {
-      setIsPlay(false);
-      setRound((prev) => prev + 1);
-      setTime(5);
-    }
     return () => clearInterval(timer);
   }, [isPlay, time]);
 
   useEffect(() => {
+    if (time === 0) {
+      setIsPlay(false);
+      setTime(25 * 60); // 25분 = 1500초
+      setRound((prev) => prev + 1);
+    }
+  }, [time]);
+
+  useEffect(() => {
     if (round === 4) {
-      setGoal((prev) => prev + 1);
+      if (goal + 1 === 12) {
+        alert("목표를 달성했습니다! 🏆");
+      }
+      if (goal < 12) {
+        setGoal((prev) => prev + 1);
+      }
       setRound(0);
     }
   }, [round]);
 
   return (
-    <Wrapper
-      animate={{
-        backgroundColor: theme.primaryColor,
-      }}
-      transition={{ duration: 0.6, ease: "easeInOut" }}
-    >
-      <ThemeBtn onClick={toggleTheme}>{isDark ? "🍅" : "🌙"}</ThemeBtn>
+    <Wrapper>
       <Title>Pomodoro</Title>
       <NumberPanel>
         <motion.div

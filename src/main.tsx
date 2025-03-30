@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { RecoilRoot } from "recoil";
-import { createGlobalStyle } from "styled-components";
+import { RecoilRoot, useRecoilValue } from "recoil";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
 import App from "./App";
+import { darkTheme, colorTheme } from "./theme";
+import { isDarkAtom } from "./Atom";
 
 const rootElement = document.getElementById("root") as HTMLElement;
 const root = ReactDOM.createRoot(rootElement);
@@ -72,11 +74,20 @@ a {
 }
 `;
 
+function Root() {
+  const isDark = useRecoilValue(isDarkAtom);
+  return (
+    <ThemeProvider theme={isDark ? darkTheme : colorTheme}>
+      <GlobalStyle />
+      <App />
+    </ThemeProvider>
+  );
+}
+
 root.render(
   <React.StrictMode>
     <RecoilRoot>
-      <GlobalStyle />
-      <App />
+      <Root />
     </RecoilRoot>
   </React.StrictMode>
 );
